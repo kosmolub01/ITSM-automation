@@ -16,9 +16,34 @@ function sendMessage(tabID, message){
   console.log("Message was sent to the tab:", tabID)
 }
 
+// Open new tab of ITSM and start sending messages with incident ID to the newly created tab.
+function openItsmNewTabAndStartSendingMessages(incidentId){
+    // Open new tab of ITSM.
+    chrome.tabs.create({ url: "ITSM URL" }, function (tab) {
+
+    // Save ID of opened tab.
+    const targetTabId = tab.id;
+
+    console.log("ID of created tab: ", targetTabId);
+
+    // Register an event listener for tab updates - before interacting with the tab,
+    // it has to be loaded and in "complete" status.
+    chrome.tabs.onUpdated.addListener(function listener(tabId, changeInfo) {
+      // Check if the tab is completely loaded and the status is "complete".
+      if (tabId === tab.id && changeInfo.status === "complete") {
+        // Unregister the event listener to avoid duplicate calls.
+        chrome.tabs.onUpdated.removeListener(listener);
+
+        // Start sending incident ID to the tab every 0.5 second.
+        intervalId = setInterval(sendMessage, 500, targetTabId, {incId: incidentId});
+      }
+    });
+  });
+}
+
 // Done only once at install time.
 chrome.runtime.onInstalled.addListener(() => {
-    // Create context menu.
+    // Create context menus.
     chrome.contextMenus.create({
         id: "1",
         title: "Search the ITSM for \"%s\"", 
@@ -37,33 +62,17 @@ chrome.runtime.onInstalled.addListener(() => {
           clearInterval(intervalId);
         }
       }
+      else if (message.type === "popupScriptMessage"){
+        const incidentId = message.incId;
+        console.log("Incident ID received from popup script: ", incidentId)
+        openItsmNewTabAndStartSendingMessages(incidentId);
+      }
     });
 });
 
 // Listener for the context menu.
 chrome.contextMenus.onClicked.addListener(function(info, tab){
     // Retrieve what user selected.
-    let incidentId = info.selectionText;
-
-    // Open new tab of ITSM.
-    chrome.tabs.create({ url: "ITSM URL" }, function (tab) {
-
-    // Save ID of opened tab.
-    let targetTabId = tab.id;
-
-    console.log("ID of created tab: ", targetTabId);
-
-    // Register an event listener for tab updates - before interacting with the tab,
-    // it has to be loaded and in "complete" status.
-    chrome.tabs.onUpdated.addListener(function listener(tabId, changeInfo) {
-      // Check if the tab is completely loaded and the status is "complete".
-      if (tabId === tab.id && changeInfo.status === "complete") {
-        // Unregister the event listener to avoid duplicate calls.
-        chrome.tabs.onUpdated.removeListener(listener);
-
-        // Start sending incident ID to the tab every 0.5 second.
-        intervalId = setInterval(sendMessage, 500, targetTabId, {data: incidentId});
-      }
-    });
-  });
+    const incidentId = info.selectionText;
+    openItsmNewTabAndStartSendingMessages(incidentId);
 })
