@@ -35,7 +35,7 @@ function openItsmNewTabAndStartSendingMessages(incidentId){
         chrome.tabs.onUpdated.removeListener(listener);
 
         // Start sending incident ID to the tab every 0.5 second.
-        intervalId = setInterval(sendMessage, 500, targetTabId, {data: incidentId});
+        intervalId = setInterval(sendMessage, 500, targetTabId, {incId: incidentId});
       }
     });
   });
@@ -43,7 +43,7 @@ function openItsmNewTabAndStartSendingMessages(incidentId){
 
 // Done only once at install time.
 chrome.runtime.onInstalled.addListener(() => {
-    // Create context menu.
+    // Create context menus.
     chrome.contextMenus.create({
         id: "1",
         title: "Search the ITSM for \"%s\"", 
@@ -63,7 +63,8 @@ chrome.runtime.onInstalled.addListener(() => {
         }
       }
       else if (message.type === "popupScriptMessage"){
-        const incidentId = message.incidentId;
+        const incidentId = message.incId;
+        console.log("Incident ID received from popup script: ", incidentId)
         openItsmNewTabAndStartSendingMessages(incidentId);
       }
     });

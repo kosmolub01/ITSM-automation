@@ -39,7 +39,7 @@ function waitForElementToBeVisible(selector) {
 // Searches the ITSM for the incident. It replaces manual clicking.
 function searchForTheIncident(incidentId){
   // Click on "Search Incident" (wait untill it is visible). 
-  let searchIncidentElementSelector = 'search incident element selector'
+  const searchIncidentElementSelector = 'search incident element selector';
   const searchIncidentElement = document.querySelector(searchIncidentElementSelector);
 
   waitForElementToBeVisible(searchIncidentElementSelector).then((searchIncidentElement) => {
@@ -48,7 +48,7 @@ function searchForTheIncident(incidentId){
   });
 
   // Insert incident ID into the textarea element (wait untill it is visible). 
-  let textAreaElementSelector = 'text area element selector'
+  const textAreaElementSelector = 'text area element selector';
   const textAreaElement = document.querySelector(textAreaElementSelector);
 
   waitForElementToBeVisible(textAreaElementSelector).then((textAreaElement) => {
@@ -59,12 +59,12 @@ function searchForTheIncident(incidentId){
 
       // Double clicking the textbox (incident ID) makes searching possible - it trickts system that incident ID was typed by the user.
       // Without it, system does not recognize that ID was provided and refuses to continue.
-      let clickEvent  = document.createEvent ('MouseEvents');
+      const clickEvent  = document.createEvent ('MouseEvents');
       clickEvent.initEvent ('dblclick', true, true);
       textAreaElement.dispatchEvent (clickEvent);
 
       // Click "Search" button (wait untill it is visible). 
-      let searchButtonSelector = 'search button selector';
+      const searchButtonSelector = 'search button selector';
       const searchButton = document.querySelector(searchButtonSelector);
 
       waitForElementToBeVisible(searchButtonSelector).then((searchButton) => {
@@ -81,12 +81,12 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if(!searchStarted)
   {
     // Access the incident ID passed from the background script.
-    let incidentId = message.data;
+    const incidentId = message.incId;
 
     console.log("Received data in content script:", incidentId);
 
     // Check tab name.
-    if(document.title == "target page title"){
+    if(document.title == "BMC Remedy (Search)"){
       // Target page was reached.
       // Send message to the background script, so it will stop sending the messages with incident ID.
       chrome.runtime.sendMessage({
