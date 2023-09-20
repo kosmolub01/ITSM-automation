@@ -113,7 +113,7 @@ chrome.contextMenus.onClicked.addListener(function (info, tab) {
   // User copied incident ID to the clipboard and wants to search the ITSM for it.
   else if (info.menuItemId === "clipboard") {
 
-    console.log("clipboard use scenario");
+    console.log("Clipboard use scenario");
 
     // Prepare message.
     const msg = {
