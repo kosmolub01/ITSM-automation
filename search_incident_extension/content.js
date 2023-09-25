@@ -134,7 +134,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                     console.log("Search started")
                   })
                   .catch(err => {
-                    console.error('Failed to read clipboard contents: ', err);
+                    console.log("Failed to read clipboard contents");
                   });
               }
             });
