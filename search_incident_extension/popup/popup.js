@@ -24,4 +24,24 @@ document.addEventListener("DOMContentLoaded", function () {
             incId: incidentId
         });
     });
+
+    // Handle pressing "Enter" key.
+    document.getElementById("incident-id-input").addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            // Prevent the default form submission.
+            event.preventDefault(); 
+            // Retrieve what user typed.
+            const incidentId = document.getElementById("incident-id-input").value;
+
+            console.log("in popup")
+
+            // Send it to the background script.
+            chrome.runtime.sendMessage({
+                source: "popup",
+                destination: "background",
+                context: "search incident – popup",
+                incId: incidentId
+            });
+        }
+      });
 });
