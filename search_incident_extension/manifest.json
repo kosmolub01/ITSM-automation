@@ -1,6 +1,9 @@
 {
     "name": "ITSM Automation Extension", 
     "description": "Automates searching the ITSM for the incident.", 
+    "icons": {
+        "128": "icons/icon_big_size_no_text_2.png"
+    },
     "version": "1.0",
     "manifest_version": 3, 
     "background": {

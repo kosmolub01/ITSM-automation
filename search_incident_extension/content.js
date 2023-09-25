@@ -98,7 +98,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         // Depending on the message context, get the incident ID from the message or from the clipboard.
         if (message.context === "search incident – clipboard") {
 
-          console.log("clipboard scenario in the content");
+          console.log("Clipboard scenario in the content");
 
           // To avoid multiple searches, flag has to be set already here, before asking user for permissions,
           // not just before actual search start. Promise mechanism makes it tricky here. 
@@ -121,23 +121,27 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
                     console.log("Incident ID in the content script:", incidentId);
 
+                    console.log("Gained access to the clipboard. Started searching");
+
+
                     // Click on "Home" element. It is needed to force
                     // the script to continue.  
                     homeElement.click();
+                    console.log("'Home' icon has been clicked")
 
                     // Search the ITSM for the incident.
                     searchForTheIncident(incidentId);
                     console.log("Search started")
                   })
                   .catch(err => {
-                    console.error('Failed to read clipboard contents: ', err);
+                    console.log("Failed to read clipboard contents");
                   });
               }
             });
           });
         }
         else {
-          console.log("selection or popup scenario in the content");
+          console.log("Selection or popup scenario in the content");
           incidentId = message.incId;
 
           console.log("Incident ID in the content script:", incidentId);
@@ -161,7 +165,16 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       }
     }
     else {
-      console.log("Search already started")
+      console.log("Search already started");
+      // Resend message to the background script, so it will stop sending the messages.
+      const msg = {
+        source: "content",
+        destination: "background",
+        context: "search incident",
+        targetPage: true
+      };
+
+      chrome.runtime.sendMessage(msg);
     }
   }
 });

@@ -9,17 +9,45 @@ Background script of browser extension. Automates searching incident in ITSM.
 
 // Used to stop sending periodically messages to the tab.
 let intervalId;
+// Used to implement timeout (to stop sending messages after some time).
+let sendedMessagesCounter;
+// Flag indicating whether search can be started. If false, then no new search can be started.
+let startSearch;
 
 // Send message to the specified tab and log it.
 function sendMessage(tabID, message) {
-  chrome.tabs.sendMessage(tabID, message);
-  console.log("Message was sent to the tab:", tabID)
+  // If messages were send for longer than 5 minutes.
+  if(sendedMessagesCounter < 600){
+    chrome.tabs.sendMessage(tabID, message, (response) => {
+      if (chrome.runtime.lastError) {
+        // Error message is logged as a regular message and not with "console.error",
+        // because some errors occur here during normal usage of the extension 
+        // and when everything works fine. Thanks to this the user will not get 
+        // confused.
+        console.log("Error message:", chrome.runtime.lastError.message);
+      } else {
+        // Message was delivered.
+        console.log("Message was sent to the tab:", tabID);
+      }
+    });
+    sendedMessagesCounter++;
+  }
+  else{
+    // Stop sending messages to the tab.
+    clearInterval(intervalId);
+    console.log("Stopped sending the messages from the background to the content")
+    startSearch = true;
+  }
 }
 
 // Open new tab of ITSM and start sending messages to the newly created tab.
 function openItsmNewTabAndStartSendingMessages(message) {
-  // Open new tab of ITSM.
-  chrome.tabs.create({ url: "ITSM URL" }, function (tab) {
+  if(startSearch)
+  {
+    startSearch = false;
+
+    // Open new tab of ITSM.
+    chrome.tabs.create({ url: "ITSM URL" }, function (tab) {
 
     // Save ID of opened tab.
     const targetTabId = tab.id;
@@ -33,12 +61,15 @@ function openItsmNewTabAndStartSendingMessages(message) {
       if (tabId === tab.id && changeInfo.status === "complete") {
         // Unregister the event listener to avoid duplicate calls.
         chrome.tabs.onUpdated.removeListener(listener);
+        
+        sendedMessagesCounter = 0;
 
         // Start sending message to the tab every 0.5 second.
         intervalId = setInterval(sendMessage, 500, targetTabId, message);
       }
     });
   });
+  }
 }
 
 // Done only once at install time.
@@ -69,8 +100,9 @@ chrome.runtime.onInstalled.addListener(() => {
 
         // If tab returned targetPage = true, it means the target page (ITSM) was reached and searching the incident has begun.
         if (targetPage) {
-          // Stop sending messages to the tab.
+          // Stop sending messages to the tab and reset the flag.
           clearInterval(intervalId);
+          startSearch = true;
         }
       }
       else if (message.source === "popup") {
@@ -91,6 +123,9 @@ chrome.runtime.onInstalled.addListener(() => {
       }
     }
   });
+
+  // Set the flag.
+  startSearch = true;
 });
 
 // Listener for the context menus.
@@ -113,7 +148,7 @@ chrome.contextMenus.onClicked.addListener(function (info, tab) {
   // User copied incident ID to the clipboard and wants to search the ITSM for it.
   else if (info.menuItemId === "clipboard") {
 
-    console.log("clipboard use scenario");
+    console.log("Clipboard use scenario");
 
     // Prepare message.
     const msg = {
