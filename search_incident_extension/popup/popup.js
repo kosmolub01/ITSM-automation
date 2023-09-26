@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Retrieve what user typed.
         const incidentId = document.getElementById("incident-id-input").value;
 
-        console.log("in popup")
+        console.log("Popup - User clicked search button. Sending textbox content to the background script")
 
         // Send it to the background script.
         chrome.runtime.sendMessage({
@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Retrieve what user typed.
             const incidentId = document.getElementById("incident-id-input").value;
 
-            console.log("in popup")
+            console.log("Popup - User pressed enter key. Sending textbox content to the background script")
 
             // Send it to the background script.
             chrome.runtime.sendMessage({
