@@ -24,10 +24,10 @@ function sendMessage(tabID, message) {
         // because some errors occur here during normal usage of the extension 
         // and when everything works fine. Thanks to this the user will not get 
         // confused.
-        console.log("Error message:", chrome.runtime.lastError.message);
+        console.log("Background - Suppressed error: ", chrome.runtime.lastError.message);
       } else {
         // Message was delivered.
-        console.log("Message was sent to the tab:", tabID);
+        console.log("Background - Message was sent to the tab: ", tabID);
       }
     });
     sendedMessagesCounter++;
@@ -35,7 +35,7 @@ function sendMessage(tabID, message) {
   else{
     // Stop sending messages to the tab.
     clearInterval(intervalId);
-    console.log("Stopped sending the messages from the background to the content")
+    console.log("Background - Stopped sending the messages from the background to the content")
     startSearch = true;
   }
 }
@@ -52,7 +52,7 @@ function openItsmNewTabAndStartSendingMessages(message) {
     // Save ID of opened tab.
     const targetTabId = tab.id;
 
-    console.log("ID of created tab: ", targetTabId);
+    console.log("Background - ID of created tab: ", targetTabId);
 
     // Register an event listener for tab updates - before interacting with the tab,
     // it has to be loaded and in "complete" status.
@@ -64,11 +64,16 @@ function openItsmNewTabAndStartSendingMessages(message) {
         
         sendedMessagesCounter = 0;
 
+        console.log("Background - Started sending messages to the content script");
+
         // Start sending message to the tab every 0.5 second.
         intervalId = setInterval(sendMessage, 500, targetTabId, message);
       }
     });
   });
+  }
+  else{
+    console.log("Background - requested search will not start. Wait until current search starts and try again");
   }
 }
 
@@ -96,7 +101,7 @@ chrome.runtime.onInstalled.addListener(() => {
     if (message.destination === "background") {
       if (message.source === "content") {
         const targetPage = message.targetPage;
-        console.log("'targetPage' flag received from content script:", targetPage);
+        console.log("Background - 'targetPage' flag received from content script: ", targetPage);
 
         // If tab returned targetPage = true, it means the target page (ITSM) was reached and searching the incident has begun.
         if (targetPage) {
@@ -117,7 +122,7 @@ chrome.runtime.onInstalled.addListener(() => {
           incId: incidentId
         };
 
-        console.log("Incident ID received from popup script: ", incidentId);
+        console.log("Background - Popup scenario. Incident ID received from popup script: ", incidentId);
 
         openItsmNewTabAndStartSendingMessages(msg);
       }
@@ -132,6 +137,9 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.contextMenus.onClicked.addListener(function (info, tab) {
   // User selected incident ID and wants to search the ITSM for it.
   if (info.menuItemId === "selected_text") {
+
+    console.log("Background - Selection scenario");
+
     // Retrieve what user selected.
     const incidentId = info.selectionText;
 
@@ -148,7 +156,7 @@ chrome.contextMenus.onClicked.addListener(function (info, tab) {
   // User copied incident ID to the clipboard and wants to search the ITSM for it.
   else if (info.menuItemId === "clipboard") {
 
-    console.log("Clipboard use scenario");
+    console.log("Background - Clipboard scenario");
 
     // Prepare message.
     const msg = {

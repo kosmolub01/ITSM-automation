@@ -7,7 +7,7 @@ Content script of browser extension. Automates searching incident in ITSM.
 
 ******************************************************************************/
 
-console.log("Content script executed on:", document.title)
+console.log("Content - Content script executed on: ", document.title)
 
 // Flag indicating whether searching for the incident started.
 let searchStarted = false;
@@ -38,12 +38,13 @@ function waitForElementToBeVisible(selector) {
 
 // Searches the ITSM for the incident. It replaces manual clicking.
 function searchForTheIncident(incidentId) {
+
   // Click on "Search Incident" (wait untill it is visible). 
   const searchIncidentElementSelector = 'search incident element selector'
   const searchIncidentElement = document.querySelector(searchIncidentElementSelector);
 
   waitForElementToBeVisible(searchIncidentElementSelector).then((searchIncidentElement) => {
-    console.log('searchIncidentElement is now visible:', searchIncidentElement);
+    console.log('Content - searchIncidentElement is now visible');
     searchIncidentElement.click();
   });
 
@@ -52,7 +53,7 @@ function searchForTheIncident(incidentId) {
   const textAreaElement = document.querySelector(textAreaElementSelector);
 
   waitForElementToBeVisible(textAreaElementSelector).then((textAreaElement) => {
-    console.log('textAreaElement is now visible:', textAreaElement);
+    console.log('Content - textAreaElement is now visible');
 
     // Insert incident ID into the textarea.
     textAreaElement.value = incidentId;
@@ -68,7 +69,7 @@ function searchForTheIncident(incidentId) {
     const searchButton = document.querySelector(searchButtonSelector);
 
     waitForElementToBeVisible(searchButtonSelector).then((searchButton) => {
-      console.log('searchButton is now visible:', searchButton);
+      console.log('Content - searchButton is now visible');
       searchButton.click();
     });
   });
@@ -98,7 +99,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         // Depending on the message context, get the incident ID from the message or from the clipboard.
         if (message.context === "search incident – clipboard") {
 
-          console.log("Clipboard scenario in the content");
+          console.log("Content - Clipboard scenario in the content");
 
           // To avoid multiple searches, flag has to be set already here, before asking user for permissions,
           // not just before actual search start. Promise mechanism makes it tricky here. 
@@ -110,7 +111,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
           const homeElement = document.querySelector(homeElementSelector);
 
           waitForElementToBeVisible(homeElementSelector).then((homeElement) => {
-            console.log('homeElement is now visible:', homeElement);
+            console.log('Content - homeElement is now visible');
             navigator.permissions.query({ name: 'clipboard-read' }).then(result => {
               // If permission to read the clipboard is granted or if the user will
               // be prompted to allow it, then proceed.
@@ -119,37 +120,36 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                   .then(text => {
                     incidentId = text;
 
-                    console.log("Incident ID in the content script:", incidentId);
+                    console.log("Content - Incident ID in the content script:", incidentId);
 
-                    console.log("Gained access to the clipboard. Started searching");
+                    console.log("Content - Gained access to the clipboard. Started searching");
 
 
                     // Click on "Home" element. It is needed to force
                     // the script to continue.  
                     homeElement.click();
-                    console.log("'Home' icon has been clicked")
+                    console.log("Content - 'Home' icon has been clicked")
 
                     // Search the ITSM for the incident.
                     searchForTheIncident(incidentId);
-                    console.log("Search started")
                   })
                   .catch(err => {
-                    console.log("Failed to read clipboard contents");
+                    console.log("Content - Failed to read clipboard contents");
                   });
               }
             });
           });
         }
         else {
-          console.log("Selection or popup scenario in the content");
+          console.log("Content - Selection or popup scenario");
           incidentId = message.incId;
 
-          console.log("Incident ID in the content script:", incidentId);
+          console.log("Content - Incident ID: ", incidentId);
 
           // Search the ITSM for the incident.
           searchStarted = true;
           searchForTheIncident(incidentId);
-          console.log("Search started")
+          console.log("Content - Search started")
         }
       }
       else {
@@ -165,7 +165,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       }
     }
     else {
-      console.log("Search already started");
+      console.log("Content - Search already started");
       // Resend message to the background script, so it will stop sending the messages.
       const msg = {
         source: "content",
