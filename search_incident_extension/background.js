@@ -16,7 +16,7 @@ let startSearch;
 
 // Send message to the specified tab and log it.
 function sendMessage(tabID, message) {
-  // If messages were send for longer than 5 minutes.
+  // If messages were send for longer than 5 minutes - timeout.
   if(sendedMessagesCounter < 600){
     chrome.tabs.sendMessage(tabID, message, (response) => {
       if (chrome.runtime.lastError) {
@@ -79,6 +79,10 @@ function openItsmNewTabAndStartSendingMessages(message) {
 
 // Done only once at install time.
 chrome.runtime.onInstalled.addListener(() => {
+
+  // Set the flag.
+  startSearch = true;
+
   // Create context menus.
 
   // Context menu to search incident from selected text.
@@ -128,9 +132,6 @@ chrome.runtime.onInstalled.addListener(() => {
       }
     }
   });
-
-  // Set the flag.
-  startSearch = true;
 });
 
 // Listener for the context menus.
