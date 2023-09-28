@@ -12,7 +12,7 @@ let intervalId;
 // Used to implement timeout (to stop sending messages after some time).
 let sendedMessagesCounter;
 // Flag indicating whether search can be started. If false, then no new search can be started.
-let startSearch;
+let startSearch = true;
 
 // Send message to the specified tab and log it.
 function sendMessage(tabID, message) {
