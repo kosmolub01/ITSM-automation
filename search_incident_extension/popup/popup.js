@@ -6,7 +6,7 @@ Description:
 Popup script of browser extension. Automates searching incident in ITSM.
 
 ******************************************************************************/
-
+/* POPUP USE CASE IS DISABLED
 // Add event listeners.
 document.addEventListener("DOMContentLoaded", function () {
     // Handle search button click event.
@@ -45,3 +45,4 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       });
 });
+*/
