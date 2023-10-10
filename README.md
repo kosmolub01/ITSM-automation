@@ -7,17 +7,17 @@ This extension automates the BMC Remedy ITSM.
 ## Use Cases
 1. Searching for selected incident - to search the ITSM for the incident, select an incident ID, right-click on it and chose a proper option from the context menu. The extension will open a new tab with view on desired incident.
 
-   ![image](https://github.com/kosmolub01/ITSM-automation/assets/72302279/97676de0-116a-42dd-979e-3169a0b06c86)
-   
+   ![image](https://github.com/kosmolub01/ITSM-automation/assets/72302279/da4556af-d9e1-41e8-b49b-c52abca904d3)
+ 
 
 3. Searching for copied incident - copy incident ID (for example from chat on Teams). Switch to the web browser, right-click anywhere on any page. Chose proper option from the context menu. The extension will open a new tab with view on desired incident.
 
-   ![image](https://github.com/kosmolub01/ITSM-automation/assets/72302279/4488efb1-0704-4510-b233-97510f297464)
+   ![image](https://github.com/kosmolub01/ITSM-automation/assets/72302279/5f224886-d841-4e8b-8c82-0f8063663cd8)
+   
 
+5. Searching for incident using popup window - for convenience, there will be a popup window of the extension. It will also allow searching for the incident.
 
-4. Searching for incident using popup window - for convenience, there will be a popup window of the extension. It will also allow searching for the incident.
-
-   ![image](https://github.com/kosmolub01/ITSM-automation/assets/72302279/bb497774-a33b-4927-851b-8b5a4d584cee)
+   ![image](https://github.com/kosmolub01/ITSM-automation/assets/72302279/dd2439e7-2cca-48cb-8e88-81caee014ec4)
 
 
 ## Additional Information
