@@ -21,7 +21,7 @@ This extension automates the BMC Remedy ITSM.
 
 
 ## Additional Information
-The extension will work even if you are not initially logged to the ITSM or connected to the VPN. In that case, if you use the extension, you will be prompted to loggin or connect. After that, if you do so, the extension will proceed with the searching as always. Just remember, you have limited time to login / connect - 5 minutes.
+The extension will work even if you are not initially logged to the ITSM or connected to the VPN. In that case, if you use the extension, you will be prompted to login or connect. After that, if you do so, the extension will proceed with the searching as always. Just remember, you have limited time to login / connect - 5 minutes.
 
 You cannot use this code. It will not work. It lacks the ITSM URL and web pages elements selectors - to not to expose any confidential information. 
 
